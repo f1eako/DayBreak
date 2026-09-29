@@ -97,9 +97,21 @@ export function buildPanel(config = {}) {
       value,
       emoji: mode.emoji,
     })));
-  return { embeds: [embed], components: [new ActionRowBuilder().addComponents(menu)] };
-}
+ const buttons = new ActionRowBuilder().addComponents(
+  new ButtonBuilder()
+    .setCustomId('pvp_leave_queue')
+    .setLabel('Leave Queue')
+    .setStyle(ButtonStyle.Danger)
+    .setEmoji('❌')
+);
 
+return {
+  embeds: [embed],
+  components: [
+    new ActionRowBuilder().addComponents(menu),
+    buttons,
+  ],
+};
 function acceptRows(matchId, guildId) {
   return [new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId(`pvp_accept:${guildId}:${matchId}`).setLabel('Accept Match').setStyle(ButtonStyle.Success).setEmoji('✅'),
