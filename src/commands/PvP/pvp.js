@@ -8,20 +8,23 @@ import {
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { PVP_MODES, buildPanel, setupGuild, joinQueue, leaveQueue, getQueueStatus, createParty, inviteParty, acceptPartyInvite, leaveParty, getProfile, getLeaderboard, getActiveMatch, recordResult, cancelMatch, getConfig } from '../../services/pvpMatchmakingService.js';
 
-function modeChoices(subcommand) {
-  return subcommand.addStringOption(option =>
-    option
-      .setName('mode')
-      .setDescription('Queue mode')
-      .setRequired(true)
-      .addChoices(
-        ...Object.entries(PVP_MODES).map(([value, m]) => ({
-          name: `${m.emoji} ${m.label}`,
-          value,
-        }))
-      )
-  );
-}
+.addSubcommand(s =>
+  s
+    .setName('join')
+    .setDescription('Join a PvP matchmaking queue')
+    .addStringOption(option =>
+      option
+        .setName('mode')
+        .setDescription('Queue mode')
+        .setRequired(true)
+        .addChoices(
+          ...Object.entries(PVP_MODES).map(([value, m]) => ({
+            name: `${m.emoji} ${m.label}`,
+            value,
+          }))
+        )
+    )
+)
 export default {
   data: new SlashCommandBuilder()
     .setName('pvp')
