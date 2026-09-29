@@ -1,4 +1,3 @@
-```js
 import 'dotenv/config';
 import { Client, Collection, GatewayIntentBits } from 'discord.js';
 import { REST } from '@discordjs/rest';
@@ -55,6 +54,7 @@ class TitanBot extends Client {
     this.cooldowns = new Collection();
 
     this.db = null;
+    this.webServer = null;
 
     this.rest = new REST({ version: '10' })
       .setToken(config.bot.token);
@@ -76,17 +76,17 @@ class TitanBot extends Client {
 
       if (dbStatus.isDegraded) {
         logger.warn('');
-        logger.warn('╔═══════════════════════════════════════════════════════╗');
-        logger.warn('║ ⚠️  DATABASE RUNNING IN DEGRADED MODE                 ║');
-        logger.warn('║                                                       ║');
-        logger.warn('║ Connection: In-Memory Storage (PostgreSQL unavailable)║');
-        logger.warn('║ Data Persistence: DISABLED - data lost on restart    ║');
-        logger.warn('║ Action Required: Fix PostgreSQL and restart bot      ║');
-        logger.warn('╚═══════════════════════════════════════════════════════╝');
+        logger.warn('=======================================================');
+        logger.warn('DATABASE RUNNING IN DEGRADED MODE');
+        logger.warn('');
+        logger.warn('Connection: In-Memory Storage (PostgreSQL unavailable)');
+        logger.warn('Data Persistence: DISABLED - data lost on restart');
+        logger.warn('Action Required: Fix PostgreSQL and restart bot');
+        logger.warn('=======================================================');
         logger.warn('');
       } else {
         startupLog(
-          `✅ Database Status: ${dbStatus.connectionType} (fully operational)`
+          `Database Status: ${dbStatus.connectionType} (fully operational)`
         );
       }
 
@@ -124,7 +124,7 @@ class TitanBot extends Client {
         `${this.modals.size} modals`;
 
       startupLog(
-        `ONLINE ✅ | ${this.commands.size} commands loaded | ` +
+        `ONLINE | ${this.commands.size} commands loaded | ` +
         `${handlerSummary} | Database: ${databaseMode}`
       );
 
@@ -225,7 +225,8 @@ class TitanBot extends Client {
     app.get('/health', (req, res) => {
       const dbStatus =
         this.db?.getStatus?.() || {
-          isDegraded: 'unknown'
+          isDegraded: 'unknown',
+          connectionType: 'none'
         };
 
       res.status(200).json({
@@ -303,7 +304,7 @@ class TitanBot extends Client {
           this.webServer = server;
 
           startupLog(
-            `✅ Web Server running on ${host}:${port}`
+            `Web Server running on ${host}:${port}`
           );
 
           startupLog(
@@ -359,7 +360,7 @@ class TitanBot extends Client {
         }
 
         logger.error(
-          `❌ Web server error on port ${port} ` +
+          `Web server error on port ${port} ` +
           `(${errorCode}): ${errorMessage}`
         );
 
@@ -510,13 +511,13 @@ class TitanBot extends Client {
         await loaderFn(this);
 
         startupLog(
-          `✅ Loaded ${handler.path}`
+          `Loaded ${handler.path}`
         );
 
       } catch (error) {
         if (handler.required) {
           logger.error(
-            `❌ Failed to load required handler ` +
+            `Failed to load required handler ` +
             `${handler.path}:`,
             error.message
           );
@@ -526,7 +527,7 @@ class TitanBot extends Client {
 
         if (error.code !== 'MODULE_NOT_FOUND') {
           logger.warn(
-            `⚠️ Failed to load optional handler ` +
+            `Failed to load optional handler ` +
             `${handler.path}:`,
             error.message
           );
@@ -557,7 +558,7 @@ class TitanBot extends Client {
 
     logger.info(`\n${'='.repeat(60)}`);
     logger.info(
-      `🛑 Graceful Shutdown Initiated (${reason})`
+      `Graceful Shutdown Initiated (${reason})`
     );
     logger.info(`${'='.repeat(60)}`);
 
@@ -567,7 +568,7 @@ class TitanBot extends Client {
 
       cron.getTasks().forEach(task => task.stop());
 
-      logger.info('✅ Cron jobs stopped');
+      logger.info('Cron jobs stopped');
 
       // Close web server
       if (this.webServer) {
@@ -577,7 +578,7 @@ class TitanBot extends Client {
           this.webServer.close(resolve);
         });
 
-        logger.info('✅ Web server closed');
+        logger.info('Web server closed');
       }
 
       // Close database
@@ -590,7 +591,7 @@ class TitanBot extends Client {
           await this.db.db.pool.end();
 
           logger.info(
-            '✅ Database connection closed'
+            'Database connection closed'
           );
         } catch (error) {
           logger.warn(
@@ -610,7 +611,7 @@ class TitanBot extends Client {
           this.destroy();
 
           logger.info(
-            '✅ Discord client destroyed'
+            'Discord client destroyed'
           );
         } catch (error) {
           logger.warn(
@@ -621,7 +622,7 @@ class TitanBot extends Client {
       }
 
       logger.info(
-        '✅ Graceful shutdown complete'
+        'Graceful shutdown complete'
       );
 
       shutdownLog(
@@ -728,4 +729,3 @@ try {
 }
 
 export default TitanBot;
-```
