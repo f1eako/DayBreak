@@ -32,7 +32,13 @@ export default {
       .addChannelOption(o => o.setName('log_channel').setDescription('Channel for match logs').setRequired(false).addChannelTypes(ChannelType.GuildText))
       .addStringOption(o => o.setName('banner').setDescription('Optional image URL for the matchmaking panel').setRequired(false)))
     .addSubcommand(s => s.setName('panel').setDescription('Post the Anon Matchmaking Queue panel in this channel'))
-    .addSubcommand(s => modeChoices(s.setName('join').setDescription('Join a PvP matchmaking queue').addStringOption(o => o.setName('mode').setDescription('Queue mode').setRequired(true))))
+   .addSubcommand(s =>
+  modeChoices(
+    s
+      .setName('join')
+      .setDescription('Join a PvP matchmaking queue')
+  )
+)
     .addSubcommand(s => s.setName('leave').setDescription('Leave your current matchmaking queue'))
     .addSubcommand(s => s.setName('status').setDescription('Show live matchmaking queue counts'))
     .addSubcommand(s => s.setName('match').setDescription('Show your current match'))
