@@ -87,7 +87,7 @@ export function buildPanel(config = {}) {
       'From the dropdown below **select Anon Matchmaking Queue Mode** and choose your queue mode to enter the **KOS Matchmaking queue!**'
     )
     .setColor(0x8b0000)
-    .setFooter({ text: 'Miracle LA | PvP Matchmaking' });
+    .setFooter({ text: 'DayBreak LA | PvP Matchmaking' });
 
   if (config.bannerUrl) {
     embed.setImage(config.bannerUrl);
@@ -105,19 +105,17 @@ export function buildPanel(config = {}) {
       }))
     );
 
-  const buttons = new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId('pvp_leave_queue')
-      .setLabel('Leave Queue')
-      .setStyle(ButtonStyle.Danger)
-      .setEmoji('❌')
-  );
+  const leaveButton = new ButtonBuilder()
+    .setCustomId('pvp_leave_queue')
+    .setLabel('Leave Queue')
+    .setStyle(ButtonStyle.Danger)
+    .setEmoji('🚪');
 
   return {
     embeds: [embed],
     components: [
       new ActionRowBuilder().addComponents(menu),
-      buttons,
+      new ActionRowBuilder().addComponents(leaveButton),
     ],
   };
 }
