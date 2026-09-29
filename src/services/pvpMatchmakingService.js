@@ -15,7 +15,7 @@ const ACCEPT_TIMEOUT_MS = 60_000;
 const MATCH_INTERVAL_MS = 2500;
 
 export const PVP_MODES = {
-  anon: { label: 'Anon Queue', short: '1v1', slots: 1, emoji: '🔴', description: '1v1 anonymous KOS matchmaking' },
+  anon: { label: 'Anon Queue', short: '1v1', slots: 1, emoji: '🔴', description: 'anonymous KOS matchmaking' },
   anon3v3: { label: '3v3 Anon Queue', short: '3v3', slots: 3, emoji: '🔴', description: '3v3 anonymous KOS matchmaking' },
   anon4v4: { label: '4v4 Anon Queue', short: '4v4', slots: 4, emoji: '🔴', description: '4v4 anonymous KOS matchmaking' },
   hopout: { label: 'Hop Out Queue', short: '2v2', slots: 2, emoji: '🔴', description: '2v2 Hop Out matchmaking' },
