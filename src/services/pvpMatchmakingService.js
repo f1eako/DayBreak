@@ -121,7 +121,6 @@ export function buildPanel(config = {}) {
     ],
   };
 }
-
 function matchEmbed(match, title = '⚔️ MATCH FOUND') {
   return new EmbedBuilder()
     .setTitle(title)
