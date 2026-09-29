@@ -1,3 +1,4 @@
+```js
 import {
   SlashCommandBuilder,
   PermissionFlagsBits,
@@ -25,6 +26,7 @@ import {
   recordResult,
   cancelMatch,
   getConfig,
+  loadGuildState,
 } from '../../services/pvpMatchmakingService.js';
 
 export default {
@@ -33,7 +35,6 @@ export default {
     .setDescription('Discord-only PvP matchmaking')
     .setDMPermission(false)
 
-    // SETUP
     .addSubcommand(s =>
       s
         .setName('setup')
@@ -60,20 +61,18 @@ export default {
         )
     )
 
-    // PANEL
     .addSubcommand(s =>
       s
         .setName('panel')
         .setDescription('Post the Anon Matchmaking Queue panel in this channel')
     )
 
-    // JOIN
     .addSubcommand(s =>
       s
         .setName('join')
         .setDescription('Join a PvP matchmaking queue')
-        .addStringOption(option =>
-          option
+        .addStringOption(o =>
+          o
             .setName('mode')
             .setDescription('Queue mode')
             .setRequired(true)
@@ -86,49 +85,42 @@ export default {
         )
     )
 
-    // LEAVE
     .addSubcommand(s =>
       s
         .setName('leave')
         .setDescription('Leave your current matchmaking queue')
     )
 
-    // STATUS
     .addSubcommand(s =>
       s
         .setName('status')
         .setDescription('Show live matchmaking queue counts')
     )
 
-    // MATCH
     .addSubcommand(s =>
       s
         .setName('match')
         .setDescription('Show your current match')
     )
 
-    // PROFILE
     .addSubcommand(s =>
       s
         .setName('profile')
         .setDescription('Show the PvP profile')
     )
 
-    // LEADERBOARD
     .addSubcommand(s =>
       s
         .setName('leaderboard')
         .setDescription('Show the PvP MMR leaderboard')
     )
 
-    // PARTY CREATE
     .addSubcommand(s =>
       s
         .setName('party-create')
         .setDescription('Create a PvP party')
     )
 
-    // PARTY INVITE
     .addSubcommand(s =>
       s
         .setName('party-invite')
@@ -141,7 +133,6 @@ export default {
         )
     )
 
-    // PARTY ACCEPT
     .addSubcommand(s =>
       s
         .setName('party-accept')
@@ -154,21 +145,18 @@ export default {
         )
     )
 
-    // PARTY LEAVE
     .addSubcommand(s =>
       s
         .setName('party-leave')
         .setDescription('Leave your PvP party')
     )
 
-    // PARTY INFO
     .addSubcommand(s =>
       s
         .setName('party-info')
         .setDescription('Show your PvP party')
     )
 
-    // RESULT
     .addSubcommand(s =>
       s
         .setName('result')
@@ -191,7 +179,6 @@ export default {
         )
     )
 
-    // CANCEL
     .addSubcommand(s =>
       s
         .setName('cancel')
@@ -214,7 +201,6 @@ export default {
 
     const sub = interaction.options.getSubcommand();
 
-    // STAFF-ONLY COMMANDS
     if (
       ['setup', 'result', 'cancel'].includes(sub) &&
       !interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)
@@ -230,23 +216,16 @@ export default {
     });
 
     try {
-      // =========================
-      // SETUP
-      // =========================
       if (sub === 'setup') {
         const category = interaction.options.getChannel('category');
         const logChannel = interaction.options.getChannel('log_channel');
         const banner = interaction.options.getString('banner');
 
-        const cfg = await setupGuild(
-          client,
-          interaction.guild.id,
-          {
-            categoryId: category.id,
-            logChannelId: logChannel?.id || null,
-            bannerUrl: banner || null,
-          }
-        );
+        const cfg = await setupGuild(client, interaction.guild.id, {
+          categoryId: category.id,
+          logChannelId: logChannel?.id || null,
+          bannerUrl: banner || null,
+        });
 
         return interaction.editReply(
           `✅ PvP matchmaking configured.\n` +
@@ -256,9 +235,6 @@ export default {
         );
       }
 
-      // =========================
-      // PANEL
-      // =========================
       if (sub === 'panel') {
         const cfg = await getConfig(
           client,
@@ -280,14 +256,8 @@ export default {
         );
       }
 
-      // =========================
-      // JOIN
-      // =========================
       if (sub === 'join') {
-        const mode = interaction.options.getString(
-          'mode',
-          true
-        );
+        const mode = interaction.options.getString('mode', true);
 
         const result = await joinQueue(
           client,
@@ -303,9 +273,6 @@ export default {
         );
       }
 
-      // =========================
-      // LEAVE
-      // =========================
       if (sub === 'leave') {
         const left = await leaveQueue(
           client,
@@ -320,9 +287,6 @@ export default {
         );
       }
 
-      // =========================
-      // STATUS
-      // =========================
       if (sub === 'status') {
         const status = await getQueueStatus(
           client,
@@ -340,16 +304,13 @@ export default {
           embeds: [
             new EmbedBuilder()
               .setTitle('🔴 PvP Queue Status')
-              .setDescription(desc)
+              .setDescription(desc || 'No players are currently queued.')
               .setColor(0x8b0000)
               .setTimestamp(),
           ],
         });
       }
 
-      // =========================
-      // MATCH
-      // =========================
       if (sub === 'match') {
         const match = await getActiveMatch(
           client,
@@ -381,9 +342,6 @@ export default {
         });
       }
 
-      // =========================
-      // PROFILE
-      // =========================
       if (sub === 'profile') {
         const p = await getProfile(
           client,
@@ -433,9 +391,6 @@ export default {
         });
       }
 
-      // =========================
-      // LEADERBOARD
-      // =========================
       if (sub === 'leaderboard') {
         const rows = await getLeaderboard(
           client,
@@ -461,9 +416,6 @@ export default {
         });
       }
 
-      // =========================
-      // PARTY CREATE
-      // =========================
       if (sub === 'party-create') {
         const party = await createParty(
           client,
@@ -478,14 +430,8 @@ export default {
         );
       }
 
-      // =========================
-      // PARTY INVITE
-      // =========================
       if (sub === 'party-invite') {
-        const user = interaction.options.getUser(
-          'user',
-          true
-        );
+        const user = interaction.options.getUser('user', true);
 
         const party = await inviteParty(
           client,
@@ -506,9 +452,6 @@ export default {
         );
       }
 
-      // =========================
-      // PARTY ACCEPT
-      // =========================
       if (sub === 'party-accept') {
         const party = await acceptPartyInvite(
           client,
@@ -522,9 +465,6 @@ export default {
         );
       }
 
-      // =========================
-      // PARTY LEAVE
-      // =========================
       if (sub === 'party-leave') {
         await leaveParty(
           client,
@@ -537,21 +477,14 @@ export default {
         );
       }
 
-      // =========================
-      // PARTY INFO
-      // =========================
       if (sub === 'party-info') {
-        const state = await import(
-          '../../services/pvpMatchmakingService.js'
-        );
-
-        const raw = await state.loadGuildState(
+        const raw = await loadGuildState(
           client,
           interaction.guild.id
         );
 
-        const party = Object.values(raw.parties).find(
-          p => p.members.includes(interaction.user.id)
+        const party = Object.values(raw.parties || {}).find(
+          p => p.members?.includes(interaction.user.id)
         );
 
         if (!party) {
@@ -576,9 +509,6 @@ export default {
         });
       }
 
-      // =========================
-      // RESULT
-      // =========================
       if (sub === 'result') {
         await recordResult(
           client,
@@ -593,9 +523,6 @@ export default {
         );
       }
 
-      // =========================
-      // CANCEL
-      // =========================
       if (sub === 'cancel') {
         await cancelMatch(
           client,
@@ -608,7 +535,6 @@ export default {
           '🛑 Match cancelled.'
         );
       }
-
     } catch (error) {
       console.error('[PVP COMMAND ERROR]', error);
 
@@ -618,3 +544,4 @@ export default {
     }
   },
 };
+```
