@@ -5,28 +5,89 @@ import {
   MessageFlags,
   EmbedBuilder,
 } from 'discord.js';
-import { InteractionHelper } from '../../utils/interactionHelper.js';
-import { PVP_MODES, buildPanel, setupGuild, joinQueue, leaveQueue, getQueueStatus, createParty, inviteParty, acceptPartyInvite, leaveParty, getProfile, getLeaderboard, getActiveMatch, recordResult, cancelMatch, getConfig } from '../../services/pvpMatchmakingService.js';
 
-.addSubcommand(s =>
-  s
-    .setName('join')
-    .setDescription('Join a PvP matchmaking queue')
-    .addStringOption(option =>
-      option
-        .setName('mode')
-        .setDescription('Queue mode')
-        .setRequired(true)
-        .addChoices(
-          ...Object.entries(PVP_MODES).map(([value, m]) => ({
-            name: `${m.emoji} ${m.label}`,
-            value,
-          }))
-        )
-    )
-)
+import { InteractionHelper } from '../../utils/interactionHelper.js';
+
+import {
+  PVP_MODES,
+  buildPanel,
+  setupGuild,
+  joinQueue,
+  leaveQueue,
+  getQueueStatus,
+  createParty,
+  inviteParty,
+  acceptPartyInvite,
+  leaveParty,
+  getProfile,
+  getLeaderboard,
+  getActiveMatch,
+  recordResult,
+  cancelMatch,
+  getConfig
+} from '../../services/pvpMatchmakingService.js';
+
 export default {
   data: new SlashCommandBuilder()
+    .setName('pvp')
+    .setDescription('Discord-only PvP matchmaking')
+    .setDMPermission(false)
+
+    .addSubcommand(s =>
+      s
+        .setName('setup')
+        .setDescription('Configure the PvP matchmaking system')
+        .addChannelOption(o =>
+          o
+            .setName('category')
+            .setDescription('Category for private match rooms')
+            .setRequired(true)
+            .addChannelTypes(ChannelType.GuildCategory)
+        )
+        .addChannelOption(o =>
+          o
+            .setName('log_channel')
+            .setDescription('Channel for match logs')
+            .setRequired(false)
+            .addChannelTypes(ChannelType.GuildText)
+        )
+        .addStringOption(o =>
+          o
+            .setName('banner')
+            .setDescription('Optional image URL for the matchmaking panel')
+            .setRequired(false)
+        )
+    )
+
+    .addSubcommand(s =>
+      s
+        .setName('panel')
+        .setDescription('Post the Anon Matchmaking Queue panel in this channel')
+    )
+
+    .addSubcommand(s =>
+      s
+        .setName('join')
+        .setDescription('Join a PvP matchmaking queue')
+        .addStringOption(option =>
+          option
+            .setName('mode')
+            .setDescription('Queue mode')
+            .setRequired(true)
+            .addChoices(
+              ...Object.entries(PVP_MODES).map(([value, m]) => ({
+                name: `${m.emoji} ${m.label}`,
+                value,
+              }))
+            )
+        )
+    )
+
+    .addSubcommand(s =>
+      s
+        .setName('leave')
+        .setDescription('Leave your current matchmaking queue')
+    ),
     .setName('pvp')
     .setDescription('Discord-only PvP matchmaking')
     .setDMPermission(false)
