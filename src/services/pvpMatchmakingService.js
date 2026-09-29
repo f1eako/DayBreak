@@ -83,48 +83,43 @@ function findMatch(entries, slots) {
 export function buildPanel(config = {}) {
   const embed = new EmbedBuilder()
     .setTitle('🔴 Anon Matchmaking Queue')
-    .setDescription('From the dropdown below **select Anon Matchmaking Queue Mode** and choose your queue mode to enter the **KOS Matchmaking queue!**')
+    .setDescription(
+      'From the dropdown below **select Anon Matchmaking Queue Mode** and choose your queue mode to enter the **KOS Matchmaking queue!**'
+    )
     .setColor(0x8b0000)
     .setFooter({ text: 'Miracle LA | PvP Matchmaking' });
-  if (config.bannerUrl) embed.setImage(config.bannerUrl);
+
+  if (config.bannerUrl) {
+    embed.setImage(config.bannerUrl);
+  }
 
   const menu = new StringSelectMenuBuilder()
     .setCustomId('pvp_queue')
     .setPlaceholder('Select Anon Matchmaking Queue Mode')
-    .addOptions(Object.entries(PVP_MODES).map(([value, mode]) => ({
-      label: mode.label,
-      description: mode.description,
-      value,
-      emoji: mode.emoji,
-    })));
- const buttons = new ActionRowBuilder().addComponents(
-  new ButtonBuilder()
-    .setCustomId('pvp_leave_queue')
-    .setLabel('Leave Queue')
-    .setStyle(ButtonStyle.Danger)
-    .setEmoji('❌')
-);
+    .addOptions(
+      Object.entries(PVP_MODES).map(([value, mode]) => ({
+        label: mode.label,
+        description: mode.description,
+        value,
+        emoji: mode.emoji,
+      }))
+    );
 
-return {
-  embeds: [embed],
-  components: [
-    new ActionRowBuilder().addComponents(menu),
-    buttons,
-  ],
-};
-function acceptRows(matchId, guildId) {
-  return [new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(`pvp_accept:${guildId}:${matchId}`).setLabel('Accept Match').setStyle(ButtonStyle.Success).setEmoji('✅'),
-    new ButtonBuilder().setCustomId(`pvp_decline:${guildId}:${matchId}`).setLabel('Decline').setStyle(ButtonStyle.Danger).setEmoji('❌'),
-  )];
-}
+  const buttons = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId('pvp_leave_queue')
+      .setLabel('Leave Queue')
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji('❌')
+  );
 
-function resultRows(matchId) {
-  return [new ActionRowBuilder().addComponents(
-    new ButtonBuilder().setCustomId(`pvp_result:${matchId}:A`).setLabel('Team A Won').setStyle(ButtonStyle.Primary),
-    new ButtonBuilder().setCustomId(`pvp_result:${matchId}:B`).setLabel('Team B Won').setStyle(ButtonStyle.Primary),
-    new ButtonBuilder().setCustomId(`pvp_cancel:${matchId}`).setLabel('Cancel Match').setStyle(ButtonStyle.Danger),
-  )];
+  return {
+    embeds: [embed],
+    components: [
+      new ActionRowBuilder().addComponents(menu),
+      buttons,
+    ],
+  };
 }
 
 function matchEmbed(match, title = '⚔️ MATCH FOUND') {
