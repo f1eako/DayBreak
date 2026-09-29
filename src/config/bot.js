@@ -457,6 +457,7 @@ export const botConfig = {
 
     // Community engagement systems.
     tickets: true,
+    pvpMatchmaking: true,
     giveaways: true,
     birthday: true,
     counter: true,
@@ -544,6 +545,7 @@ const COMMAND_CATEGORY_FEATURE_MAP = {
   search: "search",
   serverstats: "counter",
   ticket: "tickets",
+  pvp: "pvpMatchmaking",
   tools: "tools",
   utility: "utility",
   verification: "verification",
